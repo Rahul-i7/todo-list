@@ -1,103 +1,107 @@
+"use client"
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import TaskContainer from "@/components/TaskContainer";
+import PriorityDropdown from "@/components/PriorityDropdown";
+import FilterDropdown from "@/components/FilterDropdown";
+import { addTask } from "./hooks/useTasks";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    const [searchTask, setSearchTask] = useState("");
+    const [mode, setMode] = useState("dark");
+    const [icon, setIcon] = useState("moon");
+    const [showAddTask, setShowAddTask] = useState(false);
+
+    const [title, setTitle] = useState("");
+    const [priority, setPriority] = useState("");
+    const [filter, setFilter] = useState("All");
+
+    const [tasks, setTasks] = useState<any[]>([]);
+    const handleToggleMode = () => {
+        if (mode == "dark") {
+            setMode("light");
+            setIcon("Sun");
+        } else {
+            setMode("dark");
+            setIcon("moon");
+        }
+    }
+
+    useEffect(() => {
+        const fetchTasks = async () => {
+            const res = await fetch("./api/tasks").then(res => res.json()).then(data => setTasks(data.tasks));
+        };
+        fetchTasks();
+    }, []);
+
+    const handleShowAdd = () => {
+        setShowAddTask(!showAddTask);
+    }
+
+    const handleAdd = () => {
+        const task = { title, priority, completed: false };
+        addTask(task);
+        setTasks(prev => [...prev, task]);
+        setTitle("");
+        setPriority("");
+    }   
+    const handleDelte = (taskID: string) => {
+        setTasks((prev) => prev.filter((t) => t._id !== taskID));
+    }
+    let style;
+    if(!priority || !title) style = "border cursor-not-allowed border-[#884cf7] text-[#884cf7]"
+    else style = "cursor-pointer bg-[#884cf7]"
+
+    return (
+        <div className="h-[100vh] bg-[#14141E] flex justify-center items-center">
+            <div className="flex flex-col items-center h-[90vh] w-[50vw] border border-gray-400 rounded-4xl bg-[#181822] absolute
+            ">
+                <div className="flex flex-col w-full px-8 items-center">
+                    <h1 className="my-7 font-bold text-[1.2rem]">TODO LIST</h1>
+                    <div className="flex w-full items-center gap-2.5 px-3 justify-between">
+                        <div className="border-white border rounded-4xl flex grow p-[5px]">
+                            <input type="text" className="grow ml-2.5 focus:border-none focus:outline-none" name="search" id="search" value={searchTask} onChange={(e) => { setSearchTask(e.target.value) }} />
+                            <button className="hover:bg-[#313131] ease-in-out duration-100 cursor-pointer flex justify-center items-center p-[3px] w-fit h-fit rounded-3xl" type="button"><Image alt="search-icon" src="search.svg" width={20} height={20}></Image></button>
+                        </div>
+                        <FilterDropdown value={filter} onChange={setFilter} />
+                        <button type="button" className="cursor-pointer hover:bg-[#2B2A38] ease-in-out duration-300 flex justify-center items-center p-[12px] w-fit h-fit rounded-3xl" onClick={handleToggleMode}><Image className="duration-300 transition-all" alt={`${icon}-icon`} src={`${icon}.svg`} width={25} height={25}></Image></button>
+                    </div>
+                </div>
+                
+                <div className="scrollbox rounded-4xl px-3 max-h-[80vh] overflow-y-auto p-5 border border-gray-500 bg-[#1F1F2B] m-7 w-[35vw] ">
+                    
+                    {
+                        tasks.map((t) => (
+                            <TaskContainer key={t.title} onDelete={handleDelte} task={t} />
+                        ))
+                    }
+                </div>
+
+                <button onClick={handleShowAdd} className=" fixed active:scale-90 duration-200 transition-all hover:translate-y-[-0.5rem] bottom-15 right-[29vw] z-80 cursor-pointer rounded-full p-2 bg-[#884cf7]" type="button"><Image className={`duration-400 transition-all ${showAddTask? "rotate-135": "rotate-0"}`} src="add.svg" alt="add task" height={50} width={50}></Image></button>
+
+            </div>
+            {
+                showAddTask && (
+                    <>
+                        <div onClick={handleShowAdd} className="opacity-80 fixed inset-0 bg-black h-[100vh] w-[100vw] z-30">
+                            
+                        </div>
+                        <div className="flex z-40 flex-col fixed translate-y-[-26vh] items-center rounded-4xl px-10 py-5 border border-gray-500 bg-[#1F1F2B] m-7 w-[35vw] ">
+                            <h1 className="my-4 font-semibold text-[1.2rem]">Add New Task</h1>
+                            <div className="border-white border h-[3rem] m-3 w-full rounded-4xl flex grow p-[5px]">
+                                <input type="text" placeholder="Enter a new task" className="grow ml-2.5 focus:bg-none focus:border-none focus:outline-none" name="search" id="search" value={title} onChange={(e) => { setTitle(e.target.value) }} />
+                            </div>
+                            <div className="buttons mt-7 flex w-full p-3 justify-between">
+                                <PriorityDropdown value={priority} onChange={setPriority} />
+                                
+                                <button onClick={handleAdd} disabled={!priority || !title} className={`px-4 py-2 ${style} font-semibold rounded-[30px] flex justify-center items-center w-32`} type="button">ADD</button>
+                            </div>
+                        </div>
+                    </>
+                )
+            }
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+
+    );
 }
