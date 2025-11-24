@@ -1,29 +1,30 @@
+import { NextRequest, NextResponse } from "next/server";
+import Task from "@/models/Task";
 import dbConnect from "@/lib/dbConnect";
-import { NextResponse } from "next/server";
-import mongoose, { Schema, model, models } from "mongoose";
 
-const taskSchema = new Schema({
-    title: { type: String, required: true },
-    priority: { type: String, required: true },
-    completed: { type: Boolean, default: false }
-})
-
-const Task = models.Task || model("Task", taskSchema);
-
-
-export async function DELETE(req: Request, { params }: { params: { id:string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         await dbConnect();
-        const deletedTask = await Task.findByIdAndDelete(params.id);
-        console.log
-        return NextResponse.json(
-            { message: "Task deleted successfully", deletedTask },
-            { status: 201 }
-        );
-    } catch (error: any) {
-        return NextResponse.json(
-            { error: "Failed to delete task", details: error.message },
-            { status: 500 }
-        );
+        const { id } = await params;
+        await Task.deleteOne({ _id: id });
+        return NextResponse.json({ message: "Task deleted successfully" });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: "Failed to delete task" }, { status: 500 });
+    }
+}
+
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        await dbConnect();
+        const { id } = await params;
+        const body = await req.json();
+        const { completed } = body;
+
+        await Task.findByIdAndUpdate(id, { completed });
+        return NextResponse.json({ message: "Task updated successfully" });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: "Failed to update task" }, { status: 500 });
     }
 }
