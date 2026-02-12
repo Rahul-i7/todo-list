@@ -40,10 +40,10 @@ export default function TaskContainer({ task, onDelete, onComplete }: { task: an
 
             </div>
 
-            <button className="hover:bg-[#2B2A38] ease-in-out duration-300 cursor-pointer flex justify-center items-center p-[6px] w-fit h-fit rounded-3xl" type="button">
+            <button className="dark:hover:bg-[#2B2A38] text-gray-700 dark:text-gray-300 hover:bg-gray-300 ease-in-out duration-300 cursor-pointer flex justify-center items-center p-[6px] w-fit h-fit rounded-3xl" type="button">
                 <Pencil className="w-6 h-6" />
             </button>
-            <button onClick={handleDeleteTask} className="hover:bg-[#2B2A38] ease-in-out duration-300 cursor-pointer flex justify-center items-center p-[6px] w-fit h-fit rounded-3xl" type="button">
+            <button onClick={handleDeleteTask} className="hover:bg-red-500 text-gray-700 dark:text-gray-300 ease-in-out duration-300 cursor-pointer flex justify-center items-center p-[6px] w-fit h-fit rounded-3xl" type="button">
                 <Trash2 className="w-6 h-6" />
             </button>
         </div>

@@ -116,21 +116,23 @@ export default function Home() {
     else style = "cursor-pointer bg-[#884cf7]"
 
     return (
-        <div className="h-[100vh] bg-[#14141E] flex justify-center items-center">
-            <div className="flex flex-col items-center h-[90vh] w-[95vw] sm:w-[85vw] md:w-[75vw] lg:w-[60vw] xl:w-[50vw] border border-gray-400 rounded-4xl bg-[#181822] absolute">
+        <div className="h-[100vh] bg-gray-200 dark:bg-[hsl(240,17%,8%)] flex justify-center items-center">
+            <div className="flex flex-col items-center shadow-lg h-[90vh] w-[60vw] border border-gray-400/20 rounded-4xl bg-gray-100 dark:bg-[hsl(240,17%,13%)] absolute">
                 <div className="flex flex-col w-full px-4 sm:px-6 md:px-8 items-center">
-                    <h1 className="my-5 sm:my-7 font-bold text-lg sm:text-[1.2rem]">TODO LIST</h1>
-                    <div className="flex flex-col sm:flex-row w-full items-center gap-2.5 px-2 sm:px-3 justify-between">
-                        <div className="border-white border rounded-4xl flex grow p-[5px] w-full sm:w-auto">
-                            <input type="text" className="grow ml-2.5 bg-transparent text-white placeholder:text-gray-400 focus:border-none focus:outline-none" name="search" id="search" value={searchTask} onChange={(e) => { setSearchTask(e.target.value) }} />
-                            <button className="hover:bg-[#313131] ease-in-out duration-100 cursor-pointer flex justify-center items-center p-[3px] w-fit h-fit rounded-3xl" type="button"><Search className="w-5 h-5" /></button>
+                    <div className="flex justify-between items-center pl-8 py-5 w-full">
+                        <h1 className="font-bold text-2xl inline">TODO <h1 className="inline font-bold text-2xl text-[#884cf7]">LIST</h1></h1>
+                        <ToggleTheme />
+                    </div>
+                    <div className="flex flex-col sm:flex-row w-full items-center gap-2.5 px-2 justify-between">
+                        <div className="dark:bg-[hsl(240,17%,16%)] bg-gray-200/40 dark:text-gray-300 text-gray-600 border-gray-400/5 border rounded-xl flex h-12 items-center grow p-[10px] w-full">
+                            <Search className="w-5 h-5" />
+                            <input type="text" className="grow ml-2.5 bg-transparent placeholder:text-gray-400 focus:border-none focus:outline-none" name="search" id="search" value={searchTask} placeholder="Search tasks..." onChange={(e) => { setSearchTask(e.target.value) }} />
                         </div>
                         <FilterDropdown value={filter} onChange={setFilter} />
-                        <ToggleTheme />
                     </div>
                 </div>
 
-                <div className="scrollbox rounded-4xl px-3 max-h-[60vh] sm:max-h-[70vh] md:max-h-[80vh] overflow-y-auto p-3 sm:p-5 border border-gray-500 bg-[#1F1F2B] m-4 sm:m-7 w-full sm:w-[75vw] md:w-[65vw] lg:w-[50vw] xl:w-[35vw]">
+                <div className="scrollbox rounded-4xl px-3 max-h-[60vh] overflow-y-auto p-3 border border-gray-500/30 dark:bg-[hsl(240,16%,15%)] bg-gray-200/40 m-4 sm:m-7 w-full sm:w-[75vw] md:w-[65vw] lg:w-[50vw] xl:w-[35vw]">
                     {loading && (<Spinner></Spinner>)}
                     {!loading && filteredTasks.length === 0 && (
                         <p className="text-center text-gray-400 py-4">
@@ -142,7 +144,7 @@ export default function Home() {
                     ))}
                 </div>
 
-                <button onClick={handleShowAdd} className="fixed active:scale-90 duration-200 transition-all hover:translate-y-[-0.5rem] bottom-6 right-6 sm:bottom-10 sm:right-10 md:right-[15vw] lg:right-[20vw] xl:right-[29vw] z-80 cursor-pointer rounded-full p-2 bg-[#884cf7]" type="button"><Plus className={`duration-400 transition-all ${showAddTask ? "rotate-45" : "rotate-0"} w-12 h-12`} /></button>
+                <button onClick={handleShowAdd} className="text-gray-100 fixed active:scale-90 duration-200 transition-all hover:translate-y-[-0.5rem] bottom-16 right-90 z-80 cursor-pointer rounded-full p-2 bg-[#884cf7]" type="button"><Plus className={`duration-400 transition-all ${showAddTask ? "rotate-45" : "rotate-0"} w-12 h-12`} /></button>
 
             </div>
             {
@@ -151,10 +153,10 @@ export default function Home() {
                         <div onClick={handleShowAdd} className="opacity-80 fixed inset-0 bg-black h-[100vh] w-[100vw] z-30">
 
                         </div>
-                        <div className="flex z-40 flex-col fixed translate-y-[-20vh] sm:translate-y-[-26vh] items-center rounded-4xl px-6 sm:px-10 py-5 border border-gray-500 bg-[#1F1F2B] m-4 sm:m-7 w-[90vw] sm:w-[80vw] md:w-[60vw] lg:w-[45vw] xl:w-[35vw]">
-                            <h1 className="my-4 font-semibold text-lg sm:text-[1.2rem]">Add New Task</h1>
-                            <div className="border-white border h-[3rem] m-3 w-full rounded-4xl flex grow p-[5px]">
-                                <input type="text" placeholder="Enter a new task" className="grow ml-2.5 bg-transparent text-white placeholder:text-gray-400 focus:bg-none focus:border-none focus:outline-none" name="search" id="search" value={title} onChange={(e) => { setTitle(e.target.value) }} />
+                        <div className="flex z-40 flex-col fixed translate-y-[-20vh] items-center rounded-4xl px-10 py-5 border border-gray-500 dark:bg-[#1F1F2B] bg-gray-200 m-4 w-[40vw]">
+                            <h1 className="my-4 font-semibold text-lg">Add New Task</h1>
+                            <div className="dark:bg-[hsl(240,17%,16%)] bg-gray-300 dark:text-gray-300 text-gray-600 border-gray-400/5 border rounded-xl flex grow w-full h-12 p-[5px]">
+                                <input type="text" placeholder="Enter a new task" className="grow ml-2.5 bg-transparent text-gray-800 dark:text-white placeholder:text-gray-500 focus:bg-none focus:border-none focus:outline-none" name="search" id="search" value={title} onChange={(e) => { setTitle(e.target.value) }} />
                             </div>
                             <div className="buttons mt-7 flex flex-col sm:flex-row gap-3 sm:gap-0 w-full p-3 justify-between">
                                 <PriorityDropdown value={priority} onChange={setPriority} />

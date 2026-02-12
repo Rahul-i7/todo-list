@@ -17,7 +17,7 @@ export default function PriorityDropdown({ value, onChange }: { value: string, o
             {/* Dropdown button */}
             <button
                 onClick={() => setOpen(!open)}
-                className="px-4 py-2 cursor-pointer bg-[#884cf7] rounded-md shadow flex justify-between items-center w-full sm:w-32"
+                className="px-4 py-2 cursor-pointer bg-[#884cf7] rounded-md shadow flex justify-between items-center w-40 h-12 text-white"
             >
                 {value || "Priority"}
                 <ChevronDown className={`transition-all duration-400 ${open ? "rotate-180" : "rotate-0"} w-6 h-6`} />
